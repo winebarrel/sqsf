@@ -2,7 +2,11 @@
 
 sqsf is a tool to receive AWS SQL messages for `tail -f`.
 
+## Installation
 
+```
+brew install winebarrel/sqsf/sqsf
+```
 
 ## Usage
 
