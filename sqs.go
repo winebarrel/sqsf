@@ -22,6 +22,7 @@ type SqsfOpts struct {
 	Decode            bool
 	Delete            bool
 	VisibilityTimeout int32
+	Limit             int
 }
 
 type Client struct {
@@ -68,8 +69,14 @@ func getQueueUrl(ctx context.Context, client *sqs.Client, queueName string) (str
 }
 
 func (client *Client) Follow(ctx context.Context) error {
-	for {
-		messages, err := client.receiveMessage(ctx)
+	maxNum := maxNumberOfMessages
+
+	if 0 < client.Limit && client.Limit < maxNumberOfMessages {
+		maxNum = client.Limit
+	}
+
+	for i := 0; client.Limit == 0 || i < client.Limit; i++ {
+		messages, err := client.receiveMessage(ctx, maxNum)
 
 		if err != nil {
 			return fmt.Errorf("failed to receive message: %w", err)
@@ -95,12 +102,14 @@ func (client *Client) Follow(ctx context.Context) error {
 
 		time.Sleep(interval)
 	}
+
+	return nil
 }
 
-func (client *Client) receiveMessage(ctx context.Context) ([]types.Message, error) {
+func (client *Client) receiveMessage(ctx context.Context, maxNum int) ([]types.Message, error) {
 	input := &sqs.ReceiveMessageInput{
 		QueueUrl:            aws.String(client.QueueUrl),
-		MaxNumberOfMessages: maxNumberOfMessages,
+		MaxNumberOfMessages: int32(maxNum),
 		WaitTimeSeconds:     waitTimeSeconds,
 		VisibilityTimeout:   client.VisibilityTimeout,
 	}
