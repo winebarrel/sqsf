@@ -19,7 +19,7 @@ const (
 
 type SqsfOpts struct {
 	QueueName         string
-	Decode            bool
+	DecodeBody        bool
 	Delete            bool
 	Limit             int
 	MessageId         string
@@ -99,7 +99,7 @@ func (client *Client) Follow(ctx context.Context) error {
 				continue
 			}
 
-			j, err := marshalMessage(m, client.Decode)
+			j, err := marshalMessage(m, client.DecodeBody)
 
 			if err != nil {
 				return fmt.Errorf("failed to marshal message: %w", err)
