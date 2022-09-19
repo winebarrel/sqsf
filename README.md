@@ -1,6 +1,6 @@
 # sqsf
 
-sqsf is a tool to receive AWS SQL messages like `tail -f`.
+sqsf is a tool to receive AWS SQS messages like `tail -f`.
 
 ## Installation
 
