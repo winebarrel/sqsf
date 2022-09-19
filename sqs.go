@@ -18,7 +18,7 @@ const (
 )
 
 type Client struct {
-	*sqs.Client
+	sqs      *sqs.Client
 	queueUrl string
 	decode   bool
 	delete   bool
@@ -39,7 +39,7 @@ func NewClient(ctx context.Context, queueName string, decode bool, delete bool) 
 	}
 
 	sqs := &Client{
-		Client:   client,
+		sqs:      client,
 		queueUrl: queueUrl,
 		decode:   decode,
 		delete:   delete,
@@ -99,7 +99,7 @@ func (client *Client) receiveMessage(ctx context.Context) ([]types.Message, erro
 		WaitTimeSeconds:     waitTimeSeconds,
 	}
 
-	output, err := client.ReceiveMessage(ctx, input)
+	output, err := client.sqs.ReceiveMessage(ctx, input)
 
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (client *Client) deleteMessages(ctx context.Context, messages []types.Messa
 		})
 	}
 
-	_, err := client.DeleteMessageBatch(ctx, input)
+	_, err := client.sqs.DeleteMessageBatch(ctx, input)
 
 	if err != nil {
 		return err
