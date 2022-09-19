@@ -18,9 +18,11 @@ Usage: sqsf [OPTION] QUEUE
     	delete received message (default true)
   -version
     	print version and exit
+  -vis-timeout int
+    	visibility timeout (default 600)
 ```
 
-## Example
+### Example
 
 ```
 $ sqsf my-queue-name
