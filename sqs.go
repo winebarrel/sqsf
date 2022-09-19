@@ -101,7 +101,7 @@ func (client *Client) Follow(ctx context.Context) error {
 			fmt.Println(string(j))
 		}
 
-		if len(messages) > 0 {
+		if client.Delete && len(messages) > 0 {
 			err := client.deleteMessages(ctx, messages)
 
 			if err != nil {
