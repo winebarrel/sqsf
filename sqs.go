@@ -70,12 +70,21 @@ func getQueueUrl(ctx context.Context, client *sqs.Client, queueName string) (str
 
 func (client *Client) Follow(ctx context.Context) error {
 	maxNum := maxNumberOfMessages
+	counter := 0
 
 	if 0 < client.Limit && client.Limit < maxNumberOfMessages {
 		maxNum = client.Limit
 	}
 
-	for i := 0; client.Limit == 0 || i < client.Limit; i++ {
+	for {
+		if client.Limit > 0 {
+			if counter >= client.Limit {
+				return nil
+			}
+
+			counter++
+		}
+
 		messages, err := client.receiveMessage(ctx, maxNum)
 
 		if err != nil {
@@ -102,8 +111,6 @@ func (client *Client) Follow(ctx context.Context) error {
 
 		time.Sleep(interval)
 	}
-
-	return nil
 }
 
 func (client *Client) receiveMessage(ctx context.Context, maxNum int) ([]types.Message, error) {
