@@ -102,7 +102,7 @@ func (client *Client) receiveMessage(ctx context.Context) ([]types.Message, erro
 		QueueUrl:            aws.String(client.QueueUrl),
 		MaxNumberOfMessages: maxNumberOfMessages,
 		WaitTimeSeconds:     waitTimeSeconds,
-		VisibilityTimeout:   int32(client.VisibilityTimeout),
+		VisibilityTimeout:   client.VisibilityTimeout,
 	}
 
 	output, err := client.sqs.ReceiveMessage(ctx, input)
