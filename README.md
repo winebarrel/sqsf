@@ -15,7 +15,7 @@ Usage: sqsf [OPTION] QUEUE
   -decode
     	print decoded message body
   -delete
-    	delete received message (default true)
+    	delete received message
   -version
     	print version and exit
   -vis-timeout int
