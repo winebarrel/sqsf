@@ -32,7 +32,7 @@ func init() {
 func parseFlags() *flags {
 	flags := &flags{SqsfOpts: &sqsf.SqsfOpts{}}
 	flag.BoolVar(&flags.Decode, "decode", false, "print decoded message body")
-	flag.BoolVar(&flags.Delete, "delete", true, "delete received message")
+	flag.BoolVar(&flags.Delete, "delete", false, "delete received message")
 	visibilityTimeout := flag.Int("vis-timeout", 600, "visibility timeout")
 	showVersion := flag.Bool("version", false, "print version and exit")
 	flag.Parse()
@@ -49,8 +49,8 @@ func parseFlags() *flags {
 		log.Fatal("too many arguments")
 	}
 
-	if isFlagPassed("vis-timeout") && !isFlagPassed("delete") {
-		log.Fatal("'-delete=false' is required")
+	if flags.Delete && isFlagPassed("vis-timeout") {
+		log.Fatal("cannot pass both '-delete=true' and `-vis-timeout`")
 	}
 
 	flags.QueueName = args[0]
