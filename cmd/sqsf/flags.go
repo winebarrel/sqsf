@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/winebarrel/sqsf"
 )
 
 var (
@@ -13,9 +15,7 @@ var (
 )
 
 type flags struct {
-	queue  string
-	decode bool
-	delete bool
+	*sqsf.SqsfOpts
 }
 
 func init() {
@@ -30,8 +30,10 @@ func init() {
 }
 
 func parseFlags() *flags {
-	decode := flag.Bool("decode", false, "print decoded message body")
-	delete := flag.Bool("delete", true, "delete received message")
+	flags := &flags{SqsfOpts: &sqsf.SqsfOpts{}}
+	flag.BoolVar(&flags.Decode, "decode", false, "print decoded message body")
+	flag.BoolVar(&flags.Delete, "delete", true, "delete received message")
+	visibilityTimeout := flag.Int("vis-timeout", 600, "visibility timeout")
 	showVersion := flag.Bool("version", false, "print version and exit")
 	flag.Parse()
 
@@ -47,11 +49,12 @@ func parseFlags() *flags {
 		log.Fatal("too many arguments")
 	}
 
-	flags := &flags{
-		queue:  args[0],
-		decode: *decode,
-		delete: *delete,
+	if isFlagPassed("vis-timeout") && !isFlagPassed("delete") {
+		log.Fatal("'-delete=false' is required")
 	}
+
+	flags.QueueName = args[0]
+	flags.VisibilityTimeout = int32(*visibilityTimeout)
 
 	return flags
 }
@@ -68,6 +71,16 @@ func printVersionAndExit() {
 }
 
 func printUsageAndExit() {
-	flag.Usage()
+	flag.CommandLine.Usage()
 	os.Exit(0)
+}
+
+func isFlagPassed(name string) (passed bool) {
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			passed = true
+		}
+	})
+
+	return
 }

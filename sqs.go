@@ -17,14 +17,20 @@ const (
 	interval            = 1 * time.Second
 )
 
-type Client struct {
-	sqs      *sqs.Client
-	queueUrl string
-	decode   bool
-	delete   bool
+type SqsfOpts struct {
+	QueueName         string
+	Decode            bool
+	Delete            bool
+	VisibilityTimeout int32
 }
 
-func NewClient(ctx context.Context, queueName string, decode bool, delete bool) (*Client, error) {
+type Client struct {
+	*SqsfOpts
+	sqs      *sqs.Client
+	QueueUrl string
+}
+
+func NewClient(ctx context.Context, opts *SqsfOpts) (*Client, error) {
 	cfg, err := config.LoadDefaultConfig(ctx)
 
 	if err != nil {
@@ -32,17 +38,16 @@ func NewClient(ctx context.Context, queueName string, decode bool, delete bool) 
 	}
 
 	client := sqs.NewFromConfig(cfg)
-	queueUrl, err := getQueueUrl(ctx, client, queueName)
+	queueUrl, err := getQueueUrl(ctx, client, opts.QueueName)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to get queue URL: %w", err)
 	}
 
 	sqs := &Client{
+		SqsfOpts: opts,
 		sqs:      client,
-		queueUrl: queueUrl,
-		decode:   decode,
-		delete:   delete,
+		QueueUrl: queueUrl,
 	}
 
 	return sqs, nil
@@ -71,7 +76,7 @@ func (client *Client) Follow(ctx context.Context) error {
 		}
 
 		for _, m := range messages {
-			j, err := marshalMessage(m, client.decode)
+			j, err := marshalMessage(m, client.Decode)
 
 			if err != nil {
 				return fmt.Errorf("failed to marshal message: %w", err)
@@ -94,9 +99,10 @@ func (client *Client) Follow(ctx context.Context) error {
 
 func (client *Client) receiveMessage(ctx context.Context) ([]types.Message, error) {
 	input := &sqs.ReceiveMessageInput{
-		QueueUrl:            aws.String(client.queueUrl),
+		QueueUrl:            aws.String(client.QueueUrl),
 		MaxNumberOfMessages: maxNumberOfMessages,
 		WaitTimeSeconds:     waitTimeSeconds,
+		VisibilityTimeout:   int32(client.VisibilityTimeout),
 	}
 
 	output, err := client.sqs.ReceiveMessage(ctx, input)
@@ -111,7 +117,7 @@ func (client *Client) receiveMessage(ctx context.Context) ([]types.Message, erro
 func (client *Client) deleteMessages(ctx context.Context, messages []types.Message) error {
 	input := &sqs.DeleteMessageBatchInput{
 		Entries:  make([]types.DeleteMessageBatchRequestEntry, 0, len(messages)),
-		QueueUrl: aws.String(client.queueUrl),
+		QueueUrl: aws.String(client.QueueUrl),
 	}
 
 	for _, m := range messages {

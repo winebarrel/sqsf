@@ -14,7 +14,7 @@ func init() {
 func main() {
 	flags := parseFlags()
 	ctx := context.Background()
-	sqs, err := sqsf.NewClient(ctx, flags.queue, flags.decode, flags.delete)
+	sqs, err := sqsf.NewClient(ctx, flags.SqsfOpts)
 
 	if err != nil {
 		log.Fatal(err)
