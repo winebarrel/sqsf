@@ -18,7 +18,7 @@ brews:
       owner: winebarrel
       name: homebrew-sqsf
     homepage: https://github.com/winebarrel/sqsf
-    description: sqsf is a tool to receive AWS SQL messages for `tail -f`.
+    description: sqsf is a tool to receive AWS SQL messages like `tail -f`.
     license: MIT
     install: |
       bin.install 'sqsf'
@@ -27,7 +27,7 @@ nfpms:
     file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}"
     homepage: https://github.com/winebarrel/sqsf
     maintainer: Genki Sugawara <sugawara@winebarrel.jp>
-    description: sqsf is a tool to receive AWS SQL messages for `tail -f`.
+    description: sqsf is a tool to receive AWS SQL messages like `tail -f`.
     license: MIT
     formats:
       - deb
