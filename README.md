@@ -18,6 +18,8 @@ Usage: sqsf [OPTION] QUEUE
     	delete received message
   -limit int
     	maximum number of received messages
+  -message-id string
+    	message ID to receive
   -version
     	print version and exit
   -vis-timeout int
