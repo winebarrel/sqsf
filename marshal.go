@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 )
 
-func marshalMessage(message types.Message, decode bool) ([]byte, error) {
-	if !decode {
+func marshalMessage(message types.Message, decodeBody bool) ([]byte, error) {
+	if !decodeBody {
 		return json.MarshalIndent(message, "", "    ")
 	}
 

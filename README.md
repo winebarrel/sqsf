@@ -12,7 +12,7 @@ brew install winebarrel/sqsf/sqsf
 
 ```
 Usage: sqsf [OPTION] QUEUE
-  -decode
+  -decode-body
     	print decoded message body
   -delete
     	delete received message

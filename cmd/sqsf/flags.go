@@ -31,7 +31,7 @@ func init() {
 
 func parseFlags() *flags {
 	flags := &flags{SqsfOpts: &sqsf.SqsfOpts{}}
-	flag.BoolVar(&flags.Decode, "decode", false, "print decoded message body")
+	flag.BoolVar(&flags.DecodeBody, "decode-body", false, "print decoded message body")
 	flag.BoolVar(&flags.Delete, "delete", false, "delete received message")
 	flag.IntVar(&flags.Limit, "limit", 0, "maximum number of received messages")
 	flag.StringVar(&flags.MessageId, "message-id", "", "message ID to receive")
