@@ -1,0 +1,35 @@
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - main: ./cmd/sqsf
+    ldflags:
+      - -X main.version={{.Version}}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+checksum:
+  name_template: "checksums.txt"
+brews:
+  - tap:
+      owner: winebarrel
+      name: homebrew-sqsf
+    homepage: https://github.com/winebarrel/sqsf
+    description: sqsf is a tool to receive AWS SQL messages for `tail -f`.
+    license: MIT
+    install: |
+      bin.install 'sqsf'
+nfpms:
+  - id: sqsf-nfpms
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}"
+    homepage: https://github.com/winebarrel/sqsf
+    maintainer: Genki Sugawara <sugawara@winebarrel.jp>
+    description: sqsf is a tool to receive AWS SQL messages for `tail -f`.
+    license: MIT
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/bin
