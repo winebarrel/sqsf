@@ -41,7 +41,7 @@ $ sqsf my-queue-name
 }
 ^C # Running until CTRL-C is pressed
 
-$ sqsf -decode my-queue-name
+$ sqsf -decode-body my-queue-name
 {
     "requestContext": {
         "approximateInvokeCount": 1,
