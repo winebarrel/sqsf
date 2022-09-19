@@ -21,8 +21,9 @@ type SqsfOpts struct {
 	QueueName         string
 	Decode            bool
 	Delete            bool
-	VisibilityTimeout int32
 	Limit             int
+	MessageId         string
+	VisibilityTimeout int32
 }
 
 type Client struct {
@@ -79,7 +80,7 @@ func (client *Client) Follow(ctx context.Context) error {
 	for {
 		if client.Limit > 0 {
 			if counter >= client.Limit {
-				return nil
+				break
 			}
 
 			counter++
@@ -91,7 +92,13 @@ func (client *Client) Follow(ctx context.Context) error {
 			return fmt.Errorf("failed to receive message: %w", err)
 		}
 
+		messagesToDelete := []types.Message{}
+
 		for _, m := range messages {
+			if client.MessageId != "" && client.MessageId != *m.MessageId {
+				continue
+			}
+
 			j, err := marshalMessage(m, client.Decode)
 
 			if err != nil {
@@ -99,18 +106,25 @@ func (client *Client) Follow(ctx context.Context) error {
 			}
 
 			fmt.Println(string(j))
+			messagesToDelete = append(messagesToDelete, m)
 		}
 
-		if client.Delete && len(messages) > 0 {
-			err := client.deleteMessages(ctx, messages)
+		if client.Delete && len(messagesToDelete) > 0 {
+			err := client.deleteMessages(ctx, messagesToDelete)
 
 			if err != nil {
 				return fmt.Errorf("failed to delete messages: %w", err)
+			}
+
+			if client.MessageId != "" {
+				break
 			}
 		}
 
 		time.Sleep(interval)
 	}
+
+	return nil
 }
 
 func (client *Client) receiveMessage(ctx context.Context, maxNum int) ([]types.Message, error) {
