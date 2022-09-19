@@ -34,6 +34,7 @@ func parseFlags() *flags {
 	flag.BoolVar(&flags.Decode, "decode", false, "print decoded message body")
 	flag.BoolVar(&flags.Delete, "delete", false, "delete received message")
 	visibilityTimeout := flag.Int("vis-timeout", 600, "visibility timeout")
+	flag.IntVar(&flags.Limit, "limit", 0, "maximum number of received messages")
 	showVersion := flag.Bool("version", false, "print version and exit")
 	flag.Parse()
 
