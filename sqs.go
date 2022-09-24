@@ -29,7 +29,7 @@ type SqsfOpts struct {
 type Client struct {
 	*SqsfOpts
 	sqs      *sqs.Client
-	QueueUrl string
+	queueUrl string
 }
 
 func NewClient(ctx context.Context, opts *SqsfOpts) (*Client, error) {
@@ -49,7 +49,7 @@ func NewClient(ctx context.Context, opts *SqsfOpts) (*Client, error) {
 	sqs := &Client{
 		SqsfOpts: opts,
 		sqs:      client,
-		QueueUrl: queueUrl,
+		queueUrl: queueUrl,
 	}
 
 	return sqs, nil
@@ -129,7 +129,7 @@ func (client *Client) Follow(ctx context.Context) error {
 
 func (client *Client) receiveMessage(ctx context.Context, maxNum int) ([]types.Message, error) {
 	input := &sqs.ReceiveMessageInput{
-		QueueUrl:            aws.String(client.QueueUrl),
+		QueueUrl:            aws.String(client.queueUrl),
 		MaxNumberOfMessages: int32(maxNum),
 		WaitTimeSeconds:     waitTimeSeconds,
 		VisibilityTimeout:   client.VisibilityTimeout,
@@ -147,7 +147,7 @@ func (client *Client) receiveMessage(ctx context.Context, maxNum int) ([]types.M
 func (client *Client) deleteMessages(ctx context.Context, messages []types.Message) error {
 	input := &sqs.DeleteMessageBatchInput{
 		Entries:  make([]types.DeleteMessageBatchRequestEntry, 0, len(messages)),
-		QueueUrl: aws.String(client.QueueUrl),
+		QueueUrl: aws.String(client.queueUrl),
 	}
 
 	for _, m := range messages {
