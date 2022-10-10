@@ -129,10 +129,12 @@ func (client *Client) Follow(ctx context.Context) error {
 
 func (client *Client) receiveMessage(ctx context.Context, maxNum int) ([]types.Message, error) {
 	input := &sqs.ReceiveMessageInput{
-		QueueUrl:            aws.String(client.queueUrl),
-		MaxNumberOfMessages: int32(maxNum),
-		WaitTimeSeconds:     waitTimeSeconds,
-		VisibilityTimeout:   client.VisibilityTimeout,
+		QueueUrl:              aws.String(client.queueUrl),
+		MaxNumberOfMessages:   int32(maxNum),
+		WaitTimeSeconds:       waitTimeSeconds,
+		VisibilityTimeout:     client.VisibilityTimeout,
+		AttributeNames:        []types.QueueAttributeName{types.QueueAttributeNameAll},
+		MessageAttributeNames: []string{"All"},
 	}
 
 	output, err := client.sqs.ReceiveMessage(ctx, input)
