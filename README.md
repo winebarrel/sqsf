@@ -16,10 +16,14 @@ Usage: sqsf [OPTION] QUEUE
     	print decoded message body
   -delete
     	delete received message
+  -endpoint-url string
+    	AWS endpoint URL ($AWS_ENDPOINT_URL) (default "http://localhost:4566")
   -limit int
     	maximum number of received messages
   -message-id string
     	message ID to receive
+  -region string
+    	AWS region ($AWS_REGION) (default "us-east-1")
   -version
     	print version and exit
   -vis-timeout int
@@ -62,4 +66,10 @@ $ sqsf -decode-body my-queue-name
     "timestamp": "2022-09-19T09:01:55.043Z",
     "version": "1.0"
 }
+```
+
+### Use with LocalStack
+
+```
+$ sqsf -region us-east-1 -endpoint-url http://localhost:4566 my-queue-name
 ```

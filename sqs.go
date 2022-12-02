@@ -24,6 +24,8 @@ type SqsfOpts struct {
 	Limit             int
 	MessageId         string
 	VisibilityTimeout int32
+	Region            string
+	EndpointUrl       string
 }
 
 type Client struct {
@@ -33,7 +35,25 @@ type Client struct {
 }
 
 func NewClient(ctx context.Context, opts *SqsfOpts) (*Client, error) {
-	cfg, err := config.LoadDefaultConfig(ctx)
+	optFns := []func(*config.LoadOptions) error{}
+
+	if opts.Region != "" {
+		optFns = append(optFns, config.WithRegion(opts.Region))
+	}
+
+	if opts.EndpointUrl != "" {
+		customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+			return aws.Endpoint{
+				PartitionID:   "aws",
+				URL:           opts.EndpointUrl,
+				SigningRegion: region,
+			}, nil
+		})
+
+		optFns = append(optFns, config.WithEndpointResolverWithOptions(customResolver))
+	}
+
+	cfg, err := config.LoadDefaultConfig(ctx, optFns...)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to load AWS config: %w", err)
