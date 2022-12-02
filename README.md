@@ -17,13 +17,13 @@ Usage: sqsf [OPTION] QUEUE
   -delete
     	delete received message
   -endpoint-url string
-    	AWS endpoint URL ($AWS_ENDPOINT_URL) (default "http://localhost:4566")
+    	AWS endpoint URL ($AWS_ENDPOINT_URL)
   -limit int
     	maximum number of received messages
   -message-id string
     	message ID to receive
   -region string
-    	AWS region ($AWS_REGION) (default "us-east-1")
+    	AWS region ($AWS_REGION)
   -version
     	print version and exit
   -vis-timeout int
