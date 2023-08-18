@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/aws/aws-sdk-go-v2/config v1.18.34
-	github.com/aws/aws-sdk-go-v2/service/sqs v1.19.9
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.24.3
 )
 
 require (
