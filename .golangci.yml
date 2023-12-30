@@ -1,0 +1,8 @@
+linters:
+  enable:
+    - misspell
+    - gosimple
+  disable:
+    - govet
+run:
+  timeout: 5m
