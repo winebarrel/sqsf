@@ -41,25 +41,18 @@ func NewClient(ctx context.Context, opts *SqsfOpts) (*Client, error) {
 		optFns = append(optFns, config.WithRegion(opts.Region))
 	}
 
-	if opts.EndpointUrl != "" {
-		customResolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-			return aws.Endpoint{
-				PartitionID:   "aws",
-				URL:           opts.EndpointUrl,
-				SigningRegion: region,
-			}, nil
-		})
-
-		optFns = append(optFns, config.WithEndpointResolverWithOptions(customResolver))
-	}
-
 	cfg, err := config.LoadDefaultConfig(ctx, optFns...)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to load AWS config: %w", err)
 	}
 
-	client := sqs.NewFromConfig(cfg)
+	client := sqs.NewFromConfig(cfg, func(o *sqs.Options) {
+		if opts.EndpointUrl != "" {
+			o.BaseEndpoint = aws.String(opts.EndpointUrl)
+		}
+	})
+
 	queueUrl, err := getQueueUrl(ctx, client, opts.QueueName)
 
 	if err != nil {
