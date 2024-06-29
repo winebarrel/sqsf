@@ -5,9 +5,13 @@ go 1.22
 require (
 	github.com/aws/aws-sdk-go-v2/config v1.27.21
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.33.1
+	github.com/itchyny/gojq v0.12.16
 )
 
-require github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.2 // indirect
+require (
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.2 // indirect
+	github.com/itchyny/timefmt-go v0.1.6 // indirect
+)
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.0
