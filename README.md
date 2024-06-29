@@ -30,7 +30,16 @@ Usage: sqsf [OPTION] QUEUE
     	visibility timeout (default 600)
 ```
 
-### Example
+## Getting Started
+
+```
+$ docker compose up -d
+$ make queue
+$ make message
+$ make receive
+```
+
+## Example
 
 ```
 $ sqsf my-queue-name
@@ -68,7 +77,7 @@ $ sqsf -decode-body my-queue-name
 }
 ```
 
-### Use with LocalStack
+## Use with LocalStack
 
 ```
 $ sqsf -region us-east-1 -endpoint-url http://localhost:4566 my-queue-name
