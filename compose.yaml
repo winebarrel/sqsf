@@ -1,0 +1,17 @@
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs
+  awscli:
+    image: amazon/aws-cli
+    environment:
+      - AWS_ACCESS_KEY_ID=mock_access_key
+      - AWS_SECRET_ACCESS_KEY=mock_secret_key
+    depends_on:
+      localstack:
+        condition: service_started
+    profiles:
+      - awscli
