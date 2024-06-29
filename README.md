@@ -22,6 +22,8 @@ Usage: sqsf [OPTION] QUEUE
     	maximum number of received messages
   -message-id string
     	message ID to receive
+  -query string
+    	jq expression to filter the output
   -region string
     	AWS region ($AWS_REGION)
   -version
@@ -81,4 +83,11 @@ $ sqsf -decode-body my-queue-name
 
 ```
 $ sqsf -region us-east-1 -endpoint-url http://localhost:4566 my-queue-name
+```
+
+## Filtering with [jq](https://github.com/itchyny/gojq) expression
+
+```
+$ sqsf -query '.MessageId' my-queue-name
+3fdc12d6-3cb8-4c0d-aaa5-b6a6d40a0d54
 ```

@@ -2,6 +2,7 @@ package sqsf
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
+	"github.com/itchyny/gojq"
 )
 
 const (
@@ -26,6 +28,7 @@ type SqsfOpts struct {
 	VisibilityTimeout int32
 	Region            string
 	EndpointUrl       string
+	Query             *gojq.Query
 }
 
 type Client struct {
@@ -118,7 +121,37 @@ func (client *Client) Follow(ctx context.Context) error {
 				return fmt.Errorf("failed to marshal message: %w", err)
 			}
 
-			fmt.Println(string(j))
+			if client.Query != nil {
+				var m map[string]any
+				err = json.Unmarshal(j, &m)
+
+				if err != nil {
+					panic("failed to unmarshal message: " + err.Error())
+				}
+
+				iter := client.Query.Run(m)
+
+				for {
+					v, ok := iter.Next()
+
+					if !ok {
+						break
+					}
+
+					if err, ok := v.(error); ok {
+						if err, ok := err.(*gojq.HaltError); ok && err.Value() == nil {
+							break
+						}
+
+						return fmt.Errorf("failed to filter body: %w", err)
+					}
+
+					fmt.Println(v)
+				}
+			} else {
+				fmt.Println(string(j))
+			}
+
 			messagesToDelete = append(messagesToDelete, m)
 		}
 
