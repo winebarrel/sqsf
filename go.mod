@@ -3,7 +3,7 @@ module github.com/winebarrel/sqsf
 go 1.22
 
 require (
-	github.com/aws/aws-sdk-go-v2/config v1.27.43
+	github.com/aws/aws-sdk-go-v2/config v1.28.0
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.36.2
 	github.com/itchyny/gojq v0.12.16
 )
