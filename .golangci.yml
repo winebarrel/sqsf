@@ -1,8 +1,16 @@
+version: "2"
 linters:
   enable:
     - misspell
-    - gosimple
   disable:
     - govet
-run:
-  timeout: 5m
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+formatters:
+  exclusions:
+    generated: lax
