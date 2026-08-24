@@ -179,7 +179,7 @@ func (client *Client) receiveMessage(ctx context.Context, maxNum int) ([]types.M
 		MaxNumberOfMessages:   int32(maxNum),
 		WaitTimeSeconds:       waitTimeSeconds,
 		VisibilityTimeout:     client.VisibilityTimeout,
-		AttributeNames:        []types.QueueAttributeName{types.QueueAttributeNameAll},
+		MessageSystemAttributeNames: []types.MessageSystemAttributeName{types.MessageSystemAttributeNameAll},
 		MessageAttributeNames: []string{"All"},
 	}
 
